@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Multiple Animated Rays</title>
+  <style>
+    body {
+      margin: 0;
+      background-color: black;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    path.ray {
+      fill: none;
+      stroke: white;
+      stroke-width: 2;
+      stroke-dashoffset: 0;
+      animation: animate-ray 2s cubic-bezier( 0.68, 0.25, 0.92, 0.53 ) infinite;
+    }
+  </style>
+</head>
+<body>
+  <svg viewBox="0 0 1000 1000" preserveAspectRatio="none">
+    <path class="ray" d="M 0,0 Q 300,1200 800,-100" />
+    <path class="ray" d="M 0,-10 Q 290,1100 900,-100" stroke="cyan" />
+  </svg>
+
+  <script>
+    // Select all ray paths
+    const rays = document.querySelectorAll('.ray');
+    const beamLength = 150;
+
+    rays.forEach((path, i) => {
+      const length = path.getTotalLength();
+      path.style.strokeDasharray = `${beamLength} ${length}`;
+
+      // Create unique keyframes for each path
+      const styleSheet = document.styleSheets[0];
+      styleSheet.insertRule(`
+        @keyframes animate-ray-${i} {
+          from { stroke-dashoffset: 0; }
+          to { stroke-dashoffset: -${length}px; }
+        }
+      `, styleSheet.cssRules.length);
+
+      // Assign each path its own animation
+      path.style.animation = `animate-ray-${i} 2s cubic-bezier( 0.68, 0.25, 0.92, 0.53 ) infinite`;
+    });
+  </script>
+</body>
+</html>
